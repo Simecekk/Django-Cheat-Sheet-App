@@ -1,13 +1,14 @@
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
 
-from hollymovies_app.models import Movie
+from hollymovies_app.models import Movie, Genre
 
 
 def homepage(request):
-    movies_db = Movie.objects.all()
+    movies_db = Movie.objects.all()  # SELECT * FROM hollymoviesapp_movie;
     context = {
         'movies': movies_db,
+        'horror_genre': Genre.HORROR,
     }
     return TemplateResponse(request, 'homepage.html', context=context)
 
