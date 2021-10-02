@@ -6,6 +6,19 @@
 </head>
 <body>
 <h1>Detail filmu: {{ movie.name }}</h1>
-<p>{{ movie.description }}</p>
+
+{% if movie.description %}
+    <p>Description: {{ movie.description }}</p>
+{% endif %}
+
+{% if movie.genres.all %}
+    <p>Genres:</p>
+    <ul>
+        {% for genre in movie.genres.all %}
+            <li>{{ genre.get_name_display }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
 </body>
 </html>
