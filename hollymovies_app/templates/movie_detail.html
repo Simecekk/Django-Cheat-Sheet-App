@@ -15,7 +15,7 @@
     <p>Genres:</p>
     <ul>
         {% for genre in movie.genres.all %}
-            <li>{{ genre.get_name_display }}</li>
+            <li><a href="{% url 'genre_detail' genre.get_url_slug %}">{{ genre.get_name_display }}</a></li>
         {% endfor %}
     </ul>
 {% endif %}
