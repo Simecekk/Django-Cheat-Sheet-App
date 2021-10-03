@@ -1,12 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{% block page_title %}Default Title{% endblock page_title %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block additional_css %}{% endblock additional_css %}
 </head>
 <body>
-<h1>This is Search BAR</h1>
+<h1><a href="{% url 'homepage' %}">Homepage</a></h1>
 {% block body %}{% endblock body %}
 </body>
 </html>

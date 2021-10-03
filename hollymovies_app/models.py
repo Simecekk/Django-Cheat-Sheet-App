@@ -51,3 +51,17 @@ class Movie(BaseModel):
 
     def __str__(self):
         return f'{self.name} : {self.id}'
+
+
+class Person(BaseModel):
+    name = models.CharField(max_length=512)
+    age = models.IntegerField()
+    description = models.TextField()
+
+    class Meta:
+        abstract = True
+
+
+class Actor(Person):
+    name = models.CharField(max_length=512)
+    movies = models.ManyToManyField(Movie, related_name='actors')
