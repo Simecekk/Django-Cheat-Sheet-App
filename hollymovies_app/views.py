@@ -6,9 +6,11 @@ from hollymovies_app.models import Movie, Genre, GENRE_NAME_TO_NAME_SHORTCUT_MAP
 
 def homepage(request):
     movies_db = Movie.objects.all()  # SELECT * FROM hollymoviesapp_movie;
+    movies_by_likes = Movie.objects.all().order_by('-likes').first().likes
     context = {
         'movies': movies_db,
         'horror_genre': Genre.HORROR,
+        'movies_by_likes': movies_by_likes
     }
     return TemplateResponse(request, 'homepage.html', context=context)
 

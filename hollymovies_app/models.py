@@ -1,7 +1,21 @@
 from django.db import models
 
 
-class Genre(models.Model):
+class BaseModel(models.Model):
+    created = models.DateTimeField(
+        auto_now_add=True,
+        editable=False,
+    )
+    modified = models.DateTimeField(
+        auto_now=True,
+        editable=False,
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Genre(BaseModel):
     HORROR = 'HR'
     COMEDY = 'CM'
     GENRE_NAME_CHOICES = [
@@ -29,8 +43,7 @@ GENRE_NAME_TO_NAME_SHORTCUT_MAPPING = {
 }
 
 
-class Movie(models.Model):
-    # TODO Add Created Modified  --> Probrat order_by()
+class Movie(BaseModel):
     name = models.CharField(max_length=512)
     likes = models.IntegerField(default=0)
     description = models.TextField(blank=True, default='')
