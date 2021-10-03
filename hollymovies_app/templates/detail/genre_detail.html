@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block page_title %}Genre Detail Title{% endblock page_title %}
+
+{% block body %}
+    <h1>Detail Genre: {{ genre.name }}</h1>
+    <h4>Creator: {{ creators.1 }}</h4>
+    <h4>Page description: {{ page_description.short_description }}</h4>
+
+    {% if genre.movies.all %}
+        <p>Filmy:</p>
+        <ul>
+            {% for movie in movies %}
+                <li>{{ movie.name }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock body %}

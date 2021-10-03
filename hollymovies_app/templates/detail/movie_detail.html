@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block page_title %}Movie Detail Title{% endblock page_title %}
+
+{% block body %}
+    <h1>Detail filmu: {{ movie.name }}</h1>
+
+    {% if movie.description %}
+        <p>Description: {{ movie.description }}</p>
+    {% endif %}
+
+    {% if movie.genres.all %}
+        <p>Genres:</p>
+        <ul>
+            {% for genre in movie.genres.all %}
+                <li><a href="{% url 'genre_detail' genre.get_url_slug %}">{{ genre.get_name_display }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock body %}

@@ -20,16 +20,23 @@ def movie_detail(request, pk):
     context = {
         'movie': movie,
     }
-    return TemplateResponse(request, 'movie_detail.html', context=context)
+    return TemplateResponse(request, 'detail/movie_detail.html', context=context)
 
 
 def genre_detail(request, genre_name):
     genre_name_shortcut = GENRE_NAME_TO_NAME_SHORTCUT_MAPPING[genre_name]
     genre = Genre.objects.get(name=genre_name_shortcut)
+    movies = genre.movies.filter(likes__gte=10)
     context = {
-        'genre': genre
+        'genre': genre,
+        'movies': movies,
+        'page_description': {
+            'long_description': 'This is long description',
+            'short_description': 'This is short description'
+        },
+        'creators': ['Jan', 'Pepa']
     }
-    return TemplateResponse(request, 'genre_detail.html', context=context)
+    return TemplateResponse(request, 'detail/genre_detail.html', context=context)
 
 
 def homepage_david(request):

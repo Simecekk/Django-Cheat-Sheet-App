@@ -107,6 +107,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
+
+# TODO Use Prague timezone
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
