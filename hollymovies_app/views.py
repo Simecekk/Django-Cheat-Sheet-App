@@ -17,6 +17,11 @@ def homepage(request):
 
 def movie_detail(request, pk):
     movie = Movie.objects.get(id=pk)
+
+    if request.method == 'POST':
+        movie.likes += 1
+        movie.save()
+
     context = {
         'movie': movie,
     }

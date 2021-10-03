@@ -4,6 +4,7 @@
 
 {% block body %}
     <h1>Detail filmu: {{ movie.name }}</h1>
+    <h4>Likes: {{ movie.likes }}</h4>
 
     {% if movie.description %}
         <p>Description: {{ movie.description }}</p>
@@ -17,4 +18,9 @@
             {% endfor %}
         </ul>
     {% endif %}
+
+    <form action="{% url 'movie_detail' movie.id %}" method="post">
+        {% csrf_token %}
+        <input type="submit" value="Libí se">
+    </form>
 {% endblock body %}
