@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block body %}
-    <form action="{% url 'create_movie' %}" method="post">
+    <form action="{{ action_url }}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Save">

@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, resolve_url
 from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.utils import timezone
 from django.views import View
 from django.views.generic import TemplateView, DetailView, FormView, CreateView, UpdateView, DeleteView
@@ -133,11 +134,21 @@ class EditMovieMixin:
 
 
 class CreateMovieView(EditMovieMixin, CreateView):
-    pass
+    def get_context_data(self, **kwargs):
+        context = super(CreateMovieView, self).get_context_data(**kwargs)
+        context.update({
+            'action_url': reverse('create_movie')
+        })
+        return context
 
 
 class UpdateMovieView(EditMovieMixin, UpdateView):
-    pass
+    def get_context_data(self, **kwargs):
+        context = super(UpdateMovieView, self).get_context_data(**kwargs)
+        context.update({
+            'action_url': resolve_url('update_movie', pk=self.object.pk)
+        })
+        return context
 
 
 class DeleteMovieView(BaseDeleteView):
