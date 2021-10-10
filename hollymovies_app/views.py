@@ -3,8 +3,9 @@ from django.shortcuts import redirect, resolve_url
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views import View
-from django.views.generic import TemplateView, DetailView, FormView, CreateView
+from django.views.generic import TemplateView, DetailView, FormView, CreateView, UpdateView, DeleteView
 from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import BaseDeleteView
 
 from hollymovies_app.forms import ContactForm, MovieForm
 from hollymovies_app.models import Movie, Genre, GENRE_NAME_TO_NAME_SHORTCUT_MAPPING
@@ -33,9 +34,15 @@ class CurrentTimeMixing:
 class HomepageView(CurrentTimeMixing, TemplateView):
     template_name = 'homepage.html'
     extra_context = {
-        'movies': Movie.objects.all().order_by('-likes', 'name'),
         'horror_genre': Genre.HORROR,
     }
+
+    def get_context_data(self, **kwargs):
+        context = super(HomepageView, self).get_context_data(**kwargs)
+        context.update({
+            'movies': Movie.objects.all().order_by('-likes', 'name'),
+        })
+        return context
 
 
 # def movie_detail(request, pk):
@@ -116,10 +123,29 @@ class ContactView(View):
         return redirect('contact')
 
 
-class CreateMovieView(CreateView):
+class EditMovieMixin:
     template_name = 'create_movie.html'
     form_class = MovieForm
     model = Movie
 
     def get_success_url(self):
         return resolve_url('movie_detail', pk=self.object.id)
+
+
+class CreateMovieView(EditMovieMixin, CreateView):
+    pass
+
+
+class UpdateMovieView(EditMovieMixin, UpdateView):
+    pass
+
+
+class DeleteMovieView(BaseDeleteView):
+    model = Movie
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return resolve_url('homepage')
+

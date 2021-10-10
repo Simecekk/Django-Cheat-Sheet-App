@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from hollymovies_app.models import Movie
+from hollymovies_app.models import Movie, Genre
 
 
 def capitalized_validator(value):
@@ -20,7 +20,7 @@ class CapitalizedCharField(forms.CharField):
 
 
 class ContactForm(forms.Form):
-    name = CapitalizedCharField()
+    name = forms.ChoiceField(choices=Genre.GENRE_NAME_CHOICES)
     email = forms.EmailField()
     movies = forms.ModelMultipleChoiceField(queryset=Movie.objects.all())
     subject = forms.CharField(required=False, validators=[capitalized_validator])

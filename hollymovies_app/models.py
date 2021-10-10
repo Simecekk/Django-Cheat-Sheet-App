@@ -18,9 +18,11 @@ class BaseModel(models.Model):
 class Genre(BaseModel):
     HORROR = 'HR'
     COMEDY = 'CM'
+    THRILLER = 'TH'
     GENRE_NAME_CHOICES = [
         (HORROR, 'Horror'),
         (COMEDY, 'Comedy'),
+        (THRILLER, 'Thriller')
     ]
     name = models.CharField(choices=GENRE_NAME_CHOICES, max_length=2, unique=True)
 
