@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <form action="{% url 'contact' %}" method="post">
+        {% csrf_token %}
+        {{ contact_form.name.name }}:
+        {{ contact_form.name }}
+        <br><br>
+        {{ contact_form.email.name }}:
+        {{ contact_form.email }}
+        {{ contact_form.email.errors }}
+        <br><br>
+        {{ contact_form.subject.name }}:
+        {{ contact_form.subject }}
+        <br><br>
+        {{ contact_form.description.name }}:
+        {{ contact_form.description }}
+        {{ contact_form.description.errors }}
+        <br><br>
+        <input type="submit" value="Submit">
+    </form>
+{% endblock body %}

@@ -8,4 +8,6 @@
         Jméno: <a href="{% url 'movie_detail' movie.pk %}">{{ movie.name }} </a> - Likes: {{ movie.likes }} <br>
     {% endfor %}
     {{ current_time }}
+
+    <br><br>
 {% endblock body %}

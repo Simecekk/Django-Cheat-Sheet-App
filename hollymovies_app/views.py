@@ -6,14 +6,12 @@ from django.views import View
 from django.views.generic import TemplateView, DetailView
 from django.views.generic.detail import SingleObjectMixin
 
+from hollymovies_app.forms import ContactForm
 from hollymovies_app.models import Movie, Genre, GENRE_NAME_TO_NAME_SHORTCUT_MAPPING
 
 
 def homepage(request):
     movies_db = Movie.objects.all().order_by('-likes', 'name')
-
-    if request.method != 'GET':
-        raise Exception
 
     context = {
         'movies': movies_db,
@@ -38,6 +36,7 @@ class HomepageView(CurrentTimeMixing, TemplateView):
         'movies': Movie.objects.all().order_by('-likes', 'name'),
         'horror_genre': Genre.HORROR,
     }
+
 
 # def movie_detail(request, pk):
 #     movie = Movie.objects.get(id=pk)
@@ -89,5 +88,29 @@ def genre_detail(request, genre_name):
     return TemplateResponse(request, 'detail/genre_detail.html', context=context)
 
 
-def homepage_david(request):
-    return HttpResponse('<h1>Hollymovies Homepage David</h1>')
+class ContactView(View):
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'contact_form': ContactForm(),
+        }
+        return TemplateResponse(request, 'contact.html', context=context)
+
+    def post(self, request, *args, **kwargs):
+        bounded_contact_form = ContactForm(request.POST)
+
+        if not bounded_contact_form.is_valid():
+            context = {'contact_form': bounded_contact_form}
+            return TemplateResponse(request, 'contact.html', context=context)
+
+        name = bounded_contact_form.cleaned_data['name']
+        email = bounded_contact_form.cleaned_data['email']
+        subject = bounded_contact_form.cleaned_data['subject']
+        description = bounded_contact_form.cleaned_data['description']
+
+        print(name)
+        print(email)
+        print(subject)
+        print(description)
+
+        return redirect('contact')
