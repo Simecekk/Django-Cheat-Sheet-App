@@ -5,6 +5,7 @@
         {% csrf_token %}
         {{ contact_form.name.name }}:
         {{ contact_form.name }}
+        {{ contact_form.name.errors }}
         <br><br>
         {{ contact_form.email.name }}:
         {{ contact_form.email }}

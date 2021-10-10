@@ -1,12 +1,12 @@
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, resolve_url
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views import View
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, FormView, CreateView
 from django.views.generic.detail import SingleObjectMixin
 
-from hollymovies_app.forms import ContactForm
+from hollymovies_app.forms import ContactForm, MovieForm
 from hollymovies_app.models import Movie, Genre, GENRE_NAME_TO_NAME_SHORTCUT_MAPPING
 
 
@@ -114,3 +114,12 @@ class ContactView(View):
         print(description)
 
         return redirect('contact')
+
+
+class CreateMovieView(CreateView):
+    template_name = 'create_movie.html'
+    form_class = MovieForm
+    model = Movie
+
+    def get_success_url(self):
+        return resolve_url('movie_detail', pk=self.object.id)
