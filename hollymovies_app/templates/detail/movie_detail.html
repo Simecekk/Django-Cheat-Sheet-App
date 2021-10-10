@@ -23,4 +23,11 @@
         {% csrf_token %}
         <input type="submit" value="Libí se">
     </form>
+
+    <form action="{% url 'movie-reset-likes' movie.id %}" method="post">
+        {% csrf_token %}
+        <input type="submit" value="reset likes">
+    </form>
+
+    {{ current_time }}
 {% endblock body %}
