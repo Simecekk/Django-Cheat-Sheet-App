@@ -137,7 +137,7 @@ class CreateMovieView(EditMovieMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(CreateMovieView, self).get_context_data(**kwargs)
         context.update({
-            'action_url': reverse('create_movie')
+            'action_url': resolve_url('create_movie')
         })
         return context
 
