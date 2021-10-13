@@ -4,8 +4,14 @@
 
 {% block body %}
     <h1>Detail Genre: {{ genre.name }}</h1>
+
+    <!-- Values indexes are accessed as follow -->
     <h4>Creator: {{ creators.1 }}</h4>
-    <h4>Page description: {{ page_description.short_description }}</h4>
+
+    <!-- NOTE: that even though we are sending dict in the context,
+    we are accessing the value with a dot method instead of traditional dict[key] -->
+    <h4>Page short description: {{ page_description.short_description }}</h4>
+    <h4>Page long description: {{ page_description.long_description }}</h4>
 
     {% if genre.movies.all %}
         <p>Filmy:</p>

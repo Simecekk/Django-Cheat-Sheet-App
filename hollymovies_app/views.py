@@ -1,10 +1,8 @@
-from django.http import HttpResponse
 from django.shortcuts import redirect, resolve_url
 from django.template.response import TemplateResponse
-from django.urls import reverse
 from django.utils import timezone
 from django.views import View
-from django.views.generic import TemplateView, DetailView, FormView, CreateView, UpdateView, DeleteView
+from django.views.generic import TemplateView, DetailView, CreateView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import BaseDeleteView
 
@@ -12,7 +10,8 @@ from hollymovies_app.forms import ContactForm, MovieForm
 from hollymovies_app.models import Movie, Genre, GENRE_NAME_TO_NAME_SHORTCUT_MAPPING
 
 
-def homepage(request):
+def homepage_view(request):
+    """ Function base view """
     movies_db = Movie.objects.all().order_by('-likes', 'name')
 
     context = {
@@ -23,6 +22,9 @@ def homepage(request):
 
 
 class CurrentTimeMixing:
+    """
+        https://stackoverflow.com/questions/533631/what-is-a-mixin-and-why-are-they-useful
+    """
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -33,6 +35,11 @@ class CurrentTimeMixing:
 
 
 class HomepageView(CurrentTimeMixing, TemplateView):
+    """
+     CBV - Class-based views
+
+     https://stackoverflow.com/questions/14788181/class-based-views-vs-function-based-views
+    """
     template_name = 'homepage.html'
     extra_context = {
         'horror_genre': Genre.HORROR,
@@ -46,17 +53,17 @@ class HomepageView(CurrentTimeMixing, TemplateView):
         return context
 
 
-# def movie_detail(request, pk):
-#     movie = Movie.objects.get(id=pk)
-#
-#     if request.method == 'POST':
-#         movie.likes += 1
-#         movie.save()
-#
-#     context = {
-#         'movie': movie,
-#     }
-#     return TemplateResponse(request, 'detail/movie_detail.html', context=context)
+def movie_detail_view(request, pk):
+    movie = Movie.objects.get(id=pk)
+
+    if request.method == 'POST':
+        movie.likes += 1
+        movie.save()
+
+    context = {
+        'movie': movie,
+    }
+    return TemplateResponse(request, 'detail/movie_detail.html', context=context)
 
 
 class MovieDetailView(CurrentTimeMixing, DetailView):
@@ -80,9 +87,11 @@ class ResetMovieLikesView(SingleObjectMixin, View):
         return redirect('movie_detail', pk=pk)
 
 
-def genre_detail(request, genre_name):
+def genre_detail_view(request, genre_name):
     genre_name_shortcut = GENRE_NAME_TO_NAME_SHORTCUT_MAPPING[genre_name]
     genre = Genre.objects.get(name=genre_name_shortcut)
+
+    # Filtering only movies which have more than 10 likes
     movies = genre.movies.filter(likes__gte=10)
     context = {
         'genre': genre,
@@ -105,21 +114,19 @@ class ContactView(View):
         return TemplateResponse(request, 'contact.html', context=context)
 
     def post(self, request, *args, **kwargs):
+        # Form is bounded when we bound data to it
         bounded_contact_form = ContactForm(request.POST)
 
         if not bounded_contact_form.is_valid():
             context = {'contact_form': bounded_contact_form}
             return TemplateResponse(request, 'contact.html', context=context)
 
+        # Now we can do whatever we want with the data
+        # NOTE: We have to call is_valid() before accessing cleaned_data on the form
         name = bounded_contact_form.cleaned_data['name']
         email = bounded_contact_form.cleaned_data['email']
         subject = bounded_contact_form.cleaned_data['subject']
         description = bounded_contact_form.cleaned_data['description']
-
-        print(name)
-        print(email)
-        print(subject)
-        print(description)
 
         return redirect('contact')
 
