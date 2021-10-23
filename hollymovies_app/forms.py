@@ -1,5 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 from hollymovies_app.models import Movie, Genre
 
@@ -7,6 +9,12 @@ from hollymovies_app.models import Movie, Genre
 def capitalized_validator(value):
     if value[0].islower():
         raise ValidationError('Value must be capitalized.')
+
+
+class RegistrationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
 
 
 class CapitalizedCharField(forms.CharField):

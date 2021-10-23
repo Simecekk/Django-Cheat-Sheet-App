@@ -1,13 +1,56 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import redirect, resolve_url
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views import View
 from django.views.generic import TemplateView, DetailView, CreateView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.edit import BaseDeleteView
+from django.views.generic.edit import BaseDeleteView, FormMixin
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
-from hollymovies_app.forms import ContactForm, MovieForm
+from hollymovies_app.forms import ContactForm, MovieForm, RegistrationForm
 from hollymovies_app.models import Movie, Genre, GENRE_NAME_TO_NAME_SHORTCUT_MAPPING
+
+
+class LogoutView(View):
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('homepage')
+
+
+class LoginView(FormMixin, TemplateView):
+    template_name = 'accounts/login.html'
+    form_class = AuthenticationForm
+
+    def post(self, request, *args, **kwargs):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user:
+            login(request, user)
+            messages.success(request, 'Log in successfully')
+            return redirect('homepage')
+
+        messages.error(request, 'Wrong credentials')
+        return redirect('login')
+
+
+class RegistrationView(FormMixin, TemplateView):
+    template_name = 'accounts/registration.html'
+    form_class = RegistrationForm
+
+    def post(self, request,  *args, **kwargs):
+        registration_data = request.POST
+        form = self.form_class(registration_data)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Account {form.cleaned_data.get("username")} successfully created')
+            return redirect('login')
+        else:
+            messages.error(request, f'Something wrongs')
+            return TemplateResponse(request, 'accounts/registration.html', context={'form': form})
 
 
 def homepage_view(request):
@@ -105,7 +148,8 @@ def genre_detail_view(request, genre_name):
     return TemplateResponse(request, 'detail/genre_detail.html', context=context)
 
 
-class ContactView(View):
+class ContactView(PermissionRequiredMixin, View):
+    permission_required = 'dummyApp.can_create_contact'
 
     def get(self, request, *args, **kwargs):
         context = {
