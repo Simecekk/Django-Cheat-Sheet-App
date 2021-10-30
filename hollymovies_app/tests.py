@@ -1,7 +1,8 @@
 from django.test import SimpleTestCase, TestCase, Client
 from django.urls import reverse, resolve
 
-from hollymovies_app.models import Movie
+from hollymovies_app.forms import MovieForm
+from hollymovies_app.models import Movie, Genre
 from hollymovies_app.views import HomepageView, genre_detail_view
 
 
@@ -40,3 +41,77 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'base.html')
         self.assertTemplateUsed(response, 'homepage.html')
+
+    def test_movie_detail_GET(self):
+        # Test Non-Existing movie detail
+        url = reverse('movie_detail', args=[999999999])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+        # Test Existing movie detail
+        url = reverse('movie_detail', args=[self.movie.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_movie_detail_POST(self):
+        url = reverse('movie_detail', args=[self.movie.id])
+        response = self.client.post(url)
+        self.movie.refresh_from_db()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.movie.likes, 1)
+
+
+class TestModels(TestCase):
+
+    def setUp(self):
+        self.horror = Genre.objects.create(name=Genre.HORROR)
+        self.comedy = Genre.objects.create(name=Genre.COMEDY)
+
+        self.movie_1 = Movie.objects.create(
+            name='Testing Movie 1',
+            likes=10
+        )
+        self.movie_2 = Movie.objects.create(
+            name='Testing Movie 2',
+            likes=20
+        )
+        self.movie_3 = Movie.objects.create(
+            name='Testing Movie 3',
+            likes=30,
+        )
+        self.movie_4 = Movie.objects.create(
+            name='Testing Movie 4',
+            likes=6,
+        )
+
+    def test_genre_is_horror(self):
+        self.assertTrue(self.horror.is_genre_horror())
+
+    def test_genre_is_comedy(self):
+        self.assertTrue(self.comedy.is_genre_comedy())
+
+    def test_get_movies_with_at_least_10_likes(self):
+        movies_with_at_least_10_likes = Movie.get_movies_with_at_least_10_likes()
+        self.assertEqual(movies_with_at_least_10_likes.count(), 3)
+        for movie in movies_with_at_least_10_likes:
+            self.assertTrue(movie.likes >= 10)
+
+    def test_movie_has_at_least_than_10_likes(self):
+        self.assertFalse(self.movie_4.has_at_least_than_10_likes)
+        self.assertTrue(self.movie_2.has_at_least_than_10_likes)
+
+
+class TestForms(TestCase):
+
+    def test_movie_form_is_valid(self):
+        genre = Genre.objects.create(name=Genre.HORROR)
+        form = MovieForm(data={
+            'name': 'Rambo 1',
+            'description': 'Just another Rambo movie',
+            'genres': [genre.id],
+        })
+        self.assertTrue(form.is_valid())
+
+    def test_movie_form_is_invalid(self):
+        form = MovieForm(data={})
+        self.assertFalse(form.is_valid())

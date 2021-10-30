@@ -1,4 +1,5 @@
 from django.db import models
+import random
 
 
 class BaseModel(models.Model):
@@ -53,6 +54,18 @@ class Movie(BaseModel):
 
     def __str__(self):
         return f'{self.name} : {self.id}'
+
+    @classmethod
+    def get_movies_with_at_least_10_likes(cls):
+        return cls.objects.filter(likes__gte=10)
+
+    @staticmethod
+    def get_random_movie_description():
+        return f'description_{str(random.randint(0, 999999))}'
+
+    @property
+    def has_at_least_than_10_likes(self):
+        return self.likes >= 10
 
 
 class Person(BaseModel):
