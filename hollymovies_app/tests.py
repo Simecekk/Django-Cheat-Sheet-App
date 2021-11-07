@@ -1,9 +1,10 @@
 from django.test import SimpleTestCase, TestCase, Client
 from django.urls import reverse, resolve
 
-from hollymovies_app.forms import MovieForm
+from hollymovies_app.forms.movie import MovieForm
 from hollymovies_app.models import Movie, Genre
-from hollymovies_app.views import HomepageView, genre_detail_view
+from hollymovies_app.views.generic import HomepageView
+from hollymovies_app.views.movie import genre_detail_view
 
 
 class TestUrls(SimpleTestCase):
@@ -19,7 +20,7 @@ class TestUrls(SimpleTestCase):
 
     def test_genre_detail_url_is_resolved(self):
         """ function based views resolve test """
-        url = reverse('genre_detail', args=['testing_genre'])
+        url = reverse('genre:detail', args=['testing_genre'])
         self.assertEqual(resolve(url).func, genre_detail_view)
 
 
@@ -44,17 +45,17 @@ class TestViews(TestCase):
 
     def test_movie_detail_GET(self):
         # Test Non-Existing movie detail
-        url = reverse('movie_detail', args=[999999999])
+        url = reverse('movie:detail', args=[999999999])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
         # Test Existing movie detail
-        url = reverse('movie_detail', args=[self.movie.id])
+        url = reverse('movie:detail', args=[self.movie.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_movie_detail_POST(self):
-        url = reverse('movie_detail', args=[self.movie.id])
+        url = reverse('movie:detail', args=[self.movie.id])
         response = self.client.post(url)
         self.movie.refresh_from_db()
         self.assertEqual(response.status_code, 200)

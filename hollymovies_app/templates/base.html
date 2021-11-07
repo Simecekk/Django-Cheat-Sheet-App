@@ -10,10 +10,13 @@
 <body>
 <h1><a href="{% url 'homepage' %}">Homepage</a></h1>
 <h2><a href="{% url 'contact' %}">Contact us</a></h2>
-<h2><a href="{% url 'create_movie' %}">Create Movie</a></h2>
-<h2><a href="{% url 'login' %}">Login</a></h2>
-<h2><a href="{% url 'register' %}">Register</a></h2>
-<h2><a href="{% url 'logout' %}">Logout</a></h2>
+<h2><a href="{% url 'movie:create' %}">Create Movie</a></h2>
+<h2><a href="{% url 'auth:login' %}">Login</a></h2>
+<h2><a href="{% url 'auth:register' %}">Register</a></h2>
+<h2><a href="{% url 'auth:logout' %}">Logout</a></h2>
+{% if request.user.is_authenticated %}
+    <h2>Username: {{ request.user.username }}</h2>
+{% endif %}
 {% block body %}{% endblock body %}
 </body>
 </html>
