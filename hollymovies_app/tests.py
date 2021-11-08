@@ -18,10 +18,10 @@ class TestUrls(SimpleTestCase):
         url = reverse('homepage')
         self.assertEqual(resolve(url).func.view_class, HomepageView)
 
-    def test_genre_detail_url_is_resolved(self):
-        """ function based views resolve test """
-        url = reverse('genre:detail', args=['testing_genre'])
-        self.assertEqual(resolve(url).func, genre_detail_view)
+    # def test_genre_detail_url_is_resolved(self):
+    #     """ function based views resolve test """
+    #     url = reverse('genre:detail', args=['testing_genre'])
+    #     self.assertEqual(resolve(url).func, genre_detail_view)
 
 
 class TestViews(TestCase):

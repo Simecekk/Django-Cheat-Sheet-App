@@ -4,7 +4,9 @@ from django.views import View
 from django.views.generic import DetailView, CreateView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import BaseDeleteView
+from django.shortcuts import get_object_or_404
 
+from hollymovies_app.forms.movie import MovieForm
 from hollymovies_app.models import Movie, Genre, GENRE_NAME_TO_NAME_SHORTCUT_MAPPING
 from hollymovies_app.views.mixins import CurrentTimeMixing, EditMovieMixin
 
@@ -30,7 +32,7 @@ class ResetMovieLikesView(SingleObjectMixin, View):
     def post(self, request, pk, *args, **kwargs):
         movie = self.get_object()
         movie.likes = 0
-        movie.save()
+        movie.save(update_fields=['likes', ])
         return redirect('movie:detail', pk=pk)
 
 
@@ -82,6 +84,62 @@ def movie_detail_view(request, pk):
         'movie': movie,
     }
     return TemplateResponse(request, 'movie/detail.html', context=context)
+
+
+def reset_movie_likes_view(request, pk):
+    if request.method == 'POST':
+        movie = get_object_or_404(Movie, pk=pk)
+        movie.likes = 0
+        movie.save(update_fields=['likes', ])
+        return redirect('movie:detail', pk=pk)
+
+
+def create_movie_view(request):
+    if request.method == 'GET':
+        context = {
+            'form': MovieForm(),
+            'action_url': resolve_url('movie:create'),
+        }
+        return TemplateResponse(request, 'movie/detail.html', context=context)
+
+    elif request.method == 'POST':
+        form = MovieForm(data=request.POST)
+        if form.is_valid():
+            movie = form.save()
+            return redirect('movie:detail', pk=movie.pk)
+        else:
+            context = {
+                'form': form,
+                'action_url': resolve_url('movie:create'),
+            }
+            return TemplateResponse(request, 'movie/detail.html', context=context)
+
+
+def update_movie_view(request, pk):
+    if request.method == 'GET':
+        context = {
+            'form': MovieForm(),
+            'action_url': resolve_url('movie:update', pk=pk),
+        }
+        return TemplateResponse(request, 'movie/detail.html', context=context)
+
+    elif request.method == 'POST':
+        form = MovieForm(data=request.POST)
+        if form.is_valid():
+            movie = form.save()
+            return redirect('movie:detail', pk=movie.pk)
+        else:
+            context = {
+                'form': form,
+                'action_url': resolve_url('movie:update', pk=pk),
+            }
+            return TemplateResponse(request, 'movie/detail.html', context=context)
+
+
+def delete_movie_view(request, pk):
+    movie = get_object_or_404(Movie, pk=pk)
+    movie.delete()
+    return redirect('homepage')
 
 
 def genre_detail_view(request, genre_name):
