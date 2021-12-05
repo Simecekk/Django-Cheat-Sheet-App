@@ -60,6 +60,23 @@ class ContactView(PermissionRequiredMixin, View):
         return redirect('contact')
 
 
+class TestingCheatSheetView(TemplateView):
+    template_name = 'generic/data_types_testing.html'
+
+    # python list[0]
+    # template language jinja2 list.0
+
+    # python dict['key']
+    # template language jinja2 dict.key
+    extra_context = {
+        'list': ['index0', 'index1'],
+        'dict': {
+            'key': 'value',
+            'key2': 'value2'
+        }
+    }
+
+
 ########################
 # Function based views #
 ########################
@@ -99,3 +116,18 @@ def contact_view(request):
 
         return redirect('contact')
 
+
+def testing_cheatsheet_view(request):
+    # python list[0]
+    # template language jinja2 list.0
+
+    # python dict['key']
+    # template language jinja2 dict.key
+    context = {
+        'list': ['index0', 'index1'],
+        'dict': {
+            'key': 'value',
+            'key2': 'value2'
+        }
+    }
+    return TemplateResponse(request, 'generic/data_types_testing.html', context=context)

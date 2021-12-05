@@ -53,6 +53,7 @@ class Movie(BaseModel):
     genres = models.ManyToManyField(Genre, related_name='movies')
 
     def __str__(self):
+        # TODO explain __str__ method
         return f'{self.name} : {self.id}'
 
     @classmethod
