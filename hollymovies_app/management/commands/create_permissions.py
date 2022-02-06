@@ -12,7 +12,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         content_type, _ = ContentType.objects.get_or_create(app_label='dummyApp', model='DummyModel')
         for codename, name in GENERAL_PERMISSIONS.items():
-            Permission.objects.create(
+            Permission.objects.get_or_create(
                 codename=codename,
                 name=name,
                 content_type=content_type,
