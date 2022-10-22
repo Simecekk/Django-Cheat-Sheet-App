@@ -14,6 +14,7 @@ instead of the basic forms.Field
 """
 
 
+# TMP Comment
 class CapitalizedCharField(forms.CharField):
     def validate(self, value):
         super(CapitalizedCharField, self).validate(value)
