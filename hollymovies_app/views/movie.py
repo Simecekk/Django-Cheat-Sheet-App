@@ -74,6 +74,7 @@ class GenreDetailView(DetailView):
 ########################
 
 def movie_detail_view(request, pk):
+    # SELECT * FROM movie WHERE id=2;
     movie = Movie.objects.get(id=pk)
 
     if request.method == 'POST':
